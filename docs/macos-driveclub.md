@@ -62,7 +62,7 @@ bound by synchronisation, not by CPU time.
 
 ## Driveclub-PC changes
 
-[Driveclub-PC](https://github.com/ondrejeder/Driveclub-PC) (a Windows fork of GR2fork) lists its
+[Driveclub-PC](https://github.com/ondrejeder/Driveclub-pc-wrapper) (a Windows fork of GR2fork) lists its
 changes in `driveclub-pc/CHANGES.md`. Status on this branch:
 
 | Change | Status |
