@@ -558,6 +558,23 @@ s32 MemoryManager::MapMemory(void** out_addr, VAddr virtual_addr, u64 size, Memo
         }
     }
 
+#if defined(__APPLE__) && defined(ARCH_X86_64)
+    // Under Rosetta 2, 0xFC0000000-0x7000000000 is reserved by the translator, so the
+    // user area starts at 0x7000000000 (see address_space.cpp). Fixed mappings that a
+    // game requests in that hole (Driveclub maps its PRT aperture at 0x1000000000)
+    // are moved up by a constant offset, which keeps their layout relative to each
+    // other; the caller gets the new address back.
+    constexpr VAddr RosettaHoleStart = 0xFC0000000ULL;
+    constexpr VAddr RosettaHoleEnd = 0x7000000000ULL;
+    if (True(flags & MemoryMapFlags::Fixed) && virtual_addr >= RosettaHoleStart &&
+        virtual_addr < RosettaHoleEnd) {
+        const VAddr moved = virtual_addr + RosettaHoleEnd;
+        LOG_WARNING(Kernel_Vmm, "Fixed mapping at {:#x} is in the Rosetta-reserved range, using {:#x}",
+                    virtual_addr, moved);
+        virtual_addr = moved;
+    }
+#endif
+
     if (True(flags & MemoryMapFlags::Fixed) && True(flags & MemoryMapFlags::NoOverwrite)) {
         // Perform necessary error checking for Fixed & NoOverwrite case
         if (!IsValidMapping(virtual_addr, size)) {
