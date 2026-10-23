@@ -29,6 +29,7 @@
 #include "common/scm_rev.h"
 #include "common/singleton.h"
 #include "core/cpu_patches.h" // Windows static guest red-zone protection
+#include "core/autopilot.h"
 #include "core/debugger.h"
 #include "core/devtools/widget/module_list.h"
 #include "core/emulator_settings.h"
@@ -563,6 +564,7 @@ void Emulator::Run(std::filesystem::path file, std::vector<std::string> args,
     // Initialize components
     memory = Core::Memory::Instance();
     controllers = Common::Singleton<Input::GameControllers>::Instance();
+    Core::Autopilot::Start();
     linker = Common::Singleton<Core::Linker>::Instance();
 
     // Load renderdoc module

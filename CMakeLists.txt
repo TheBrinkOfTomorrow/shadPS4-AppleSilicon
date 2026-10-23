@@ -987,6 +987,8 @@ set(CORE src/core/aerolib/stubs.cpp
          ${CAMERA_LIBS}
          ${COMPANION_LIBS}
          ${DEV_TOOLS}
+         src/core/autopilot.cpp
+         src/core/autopilot.h
          src/core/debug_state.cpp
          src/core/debug_state.h
          src/core/debugger.cpp
