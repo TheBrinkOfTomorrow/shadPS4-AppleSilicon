@@ -148,6 +148,7 @@ void Linker::Execute(const std::vector<std::string>& args) {
 
     main_thread.Run([this, module, &args, has_libcinternal](std::stop_token) {
         Common::SetCurrentThreadName("Game:Main");
+        Common::SetCurrentThreadQoSUserInteractive();
 
 #ifndef _WIN32 // Clear any existing signal mask for game threads.
         sigset_t emptyset;

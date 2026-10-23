@@ -20,6 +20,10 @@ enum class ThreadPriority : u32 {
 
 void SetCurrentThreadRealtime(std::chrono::nanoseconds period_ns);
 
+/// On macOS, asks the scheduler to treat the current thread as user-interactive (QoS), which
+/// keeps it on performance cores; POSIX priorities alone do not. No effect elsewhere.
+void SetCurrentThreadQoSUserInteractive();
+
 void SetCurrentThreadPriority(ThreadPriority new_priority);
 
 void SetCurrentThreadName(const char* name);

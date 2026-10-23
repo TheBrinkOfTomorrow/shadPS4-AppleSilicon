@@ -16,6 +16,7 @@
 #include "common/thread.h"
 #include "ntapi.h"
 #ifdef __APPLE__
+#include <pthread/qos.h>
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <pthread.h>
@@ -274,6 +275,12 @@ std::string GetCurrentThreadName() {
         return "<unknown name>";
     }
     return std::string{name};
+#endif
+}
+
+void SetCurrentThreadQoSUserInteractive() {
+#ifdef __APPLE__
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
 #endif
 }
 
