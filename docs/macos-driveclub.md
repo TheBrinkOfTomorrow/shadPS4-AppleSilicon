@@ -49,8 +49,28 @@ Mac mini, M4 Pro, 64 GB, macOS 27.
 | + red-zone protection | 30 | 29.5 | no measurable cost |
 | + red-zone, readbacks Relaxed | 30 | 16.0 | |
 | + red-zone, readbacks Precise | 30 | 16.1 | |
+| + red-zone, readbacks Precise, QoS for game main and GPU command processor | 30 | 16.4 | within noise |
 
 Profile of a race on the earlier reference build (Time Profiler and Metal System Trace, 25 s): the
 GPU is busy 57 % of the time. The game's main thread uses 91 % of a core (81 % of it in the game's
 own translated code) and the GPU command processor 82 %. A guest WebAPI thread spins on a
 semaphore at 100 % of a core.
+
+With Precise readbacks the same threads are mostly idle (game main thread 42 %, command
+processor 44 % of a core): each readback makes the CPU wait for a GPU round trip, so that case is
+bound by synchronisation, not by CPU time.
+
+## Driveclub-PC changes
+
+[Driveclub-PC](https://github.com/ondrejeder/Driveclub-PC) (a Windows fork of GR2fork) lists its
+changes in `driveclub-pc/CHANGES.md`. Status on this branch:
+
+| Change | Status |
+|---|---|
+| Autopilot (scripted input) | ported, with a frame-rate log; screenshots left out (need RenderDoc) |
+| Red-zone protection | upstream option, on in the game config |
+| Precise readbacks by default | upstream option, left off (halves the race frame rate here) |
+| Fast guest mutexes | not needed: Windows-only, replaces a kernel mutex object; on macOS the guest mutex is a pthread mutex whose uncontended path stays in user space |
+| Separate queue-submit thread | not ported: queue submits do not show up in the command processor's profile here |
+| Texture GC skip fix | already in upstream: skipped images no longer cost a deletion |
+| P-core pinning | macOS equivalent: user-interactive QoS, done |
